@@ -455,7 +455,18 @@ class Terminal {
                         return;
                 }
             });
-            this.wss.on("connection", ws => {
+this.wss.on("connection", (ws, req) => {
+  const origin = req.headers.origin;
+  const allowedOrigins = ['http://localhost:3000']; // Adjust as needed
+
+  if (!allowedOrigins.includes(origin)) {
+    console.warn(`Blocked WebSocket connection from origin: ${origin}`);
+    ws.close();
+    return;
+  }
+
+  // existing logic continues...
+});
                 this.onopened(this.tty._pid);
                 ws.on("close", (code, reason) => {
                     this.ondisconnected(code, reason);
